@@ -1,6 +1,7 @@
 plugins {
 	id 'org.springframework.boot' version '2.1.2.RELEASE'
 	id 'java'
+	id "org.sonarqube" version "2.7"
 }
 
 apply plugin: 'java'
@@ -30,10 +31,48 @@ checkstyle {
 	configFile file('config/checkstyle/checkstyle.xml')
 }
 
+tasks.withType(Checkstyle) {
+	reports {
+		xml.enabled false
+		html.enabled true
+	}
+}
+
 jacocoTestReport {
 	reports {
 		xml.enabled false
 		csv.enabled false
 		html.enabled true
+	}
+}
+
+jacoco {
+	toolVersion = "0.8.2"
+}
+
+jacocoTestReport {
+	reports {
+		xml.enabled false
+		csv.enabled false
+		html.destination file("${buildDir}/reports/jacocoHtml")
+	}
+}
+
+test {
+	finalizedBy jacocoTestReport
+}
+
+sonarqube {
+	properties {
+		property 'sonar.host.url', "${sonar_host}"
+		property 'sonar.login', "${sonar_login}"
+		property 'sonar.organization', "${sonar_organization}"
+		property 'sonar.java.source', "${compileJava.sourceCompatibility}"
+		property 'sonar.java.target', "${compileJava.sourceCompatibility}"
+		property 'sonar.projectKey', "${sonar_key}"
+		property 'sonar.projectVersion', "${project.version}"
+		property 'sonar.sources', 'src/main'
+		property 'sonar.tests', 'src/test'
+		property 'sonar.jacoco.reportPath', "${buildDir}/jacoco/test.exec"
 	}
 }
