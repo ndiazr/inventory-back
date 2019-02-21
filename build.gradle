@@ -3,7 +3,11 @@ plugins {
 	id 'java'
 }
 
+apply plugin: 'java'
 apply plugin: 'io.spring.dependency-management'
+apply plugin: 'checkstyle'
+apply plugin: 'jacoco'
+
 
 group = 'com.inventory'
 version = '0.0.1-SNAPSHOT'
@@ -14,7 +18,22 @@ repositories {
 }
 
 dependencies {
-	compile("org.springframework.boot:spring-boot-starter-web")
-	implementation 'org.springframework.boot:spring-boot-starter'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	compile 'org.springframework.boot:spring-boot-starter-web'
+	compile 'org.springframework.boot:spring-boot-starter'
+
+	testCompile 'org.springframework.boot:spring-boot-starter-test'
+}
+
+checkstyle {
+	toolVersion = '8.14'
+	showViolations false
+	configFile file('config/checkstyle/checkstyle.xml')
+}
+
+jacocoTestReport {
+	reports {
+		xml.enabled false
+		csv.enabled false
+		html.enabled true
+	}
 }
